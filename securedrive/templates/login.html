@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"> <!-- Font Awesome link -->
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Body Styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        /* Container Styling */
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgb(208, 216, 251);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        /* Header Styling */
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(90deg, #031ece, #58a6ff);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            margin: 0;
+        }
+
+        /* Input fields styling */
+        .input-field {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #007BFF;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+            transition: background-color 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: #135a96;
+        }
+
+        /* Signup Link Styling */
+        .signup-link {
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+
+        .signup-link a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form method="post">
+            {% csrf_token %}
+            <input class="input-field" type="text" name="username" placeholder="Username" required>
+            <input class="input-field" type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="signup-link">
+            <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
+        </div>
+    </div>
+</body>
+</html>

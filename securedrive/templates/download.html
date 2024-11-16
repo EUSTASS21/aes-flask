@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fichiers Disponibles</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Body Styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        /* Container Styling */
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgb(208, 216, 251);
+            text-align: center;
+            max-width: 700px;
+            width: 90%;
+        }
+
+
+        /* Header Styling */
+        h1 {
+            font-size: 2.5em; /* Increase the size for better prominence */
+            margin-bottom: 30px;
+            font-weight: 700; /* Bold weight for better emphasis */
+            text-align: center; /* Center-align the text */
+            text-transform: uppercase; /* Uppercase letters for a more formal feel */
+            letter-spacing: 1px; /* Add some space between letters */
+            line-height: 1.3; /* Adjust line height for a cleaner look */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean, modern font */
+            background: linear-gradient(90deg, #031ece, #58a6ff); /* Gradient from blue to light blue */
+            -webkit-background-clip: text; /* Clip the background gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
+        }
+
+        /* Search Bar Styling */
+        .search-bar {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1em;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        /* List Styling */
+        ul {
+            list-style: none;
+            margin-top: 20px;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        li:hover {
+            background-color: #edf2f7;
+            border-color: #ccc;
+        }
+
+        /* Link Styling */
+        a {
+            text-decoration: none;
+            color: #1D72B8;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #135a96;
+        }
+
+        /* Download Button Styling */
+        .download-link {
+            font-size: 0.9em;
+            padding: 8px 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .download-link:hover {
+            background-color: #0056b3;
+        }
+
+        /* Button Styling */
+        .back-link {
+            display: inline-block;
+            text-align: center;
+            margin-top: 25px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            color: #4A4A4A;
+            font-weight: 500;
+            background-color: #e3eaf2;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-link:hover {
+            background-color: #d0d8e4;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fichiers à Télécharger</h1>
+
+        <!-- Search Bar -->
+        <input type="text" id="search-bar" class="search-bar" placeholder="Rechercher un fichier..." onkeyup="filterFiles()" />
+
+        <!-- File List -->
+        <ul id="file-list">
+            {% for file in files %}
+            <li>
+                <span>{{ file.title }}</span>
+                <a href="{% url 'download_file' file.id %}" class="download-link">Télécharger</a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <a href="/home/" class="back-link">Retour à l'accueil</a>
+    </div>
+
+    <script>
+        // Function to filter the files based on search input
+        function filterFiles() {
+            let searchQuery = document.getElementById('search-bar').value.toLowerCase();
+            let files = document.querySelectorAll('#file-list li');
+            
+            files.forEach(file => {
+                let fileTitle = file.querySelector('span').textContent.toLowerCase();
+                if (fileTitle.includes(searchQuery)) {
+                    file.style.display = 'flex';
+                } else {
+                    file.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
