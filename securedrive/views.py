@@ -8,27 +8,32 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from django.contrib.auth.forms import UserCreationForm
 
-gauth = GoogleAuth()
-# Load credentials and authenticate
-try:
-    gauth.LoadCredentialsFile("credentials.json")
-except Exception as e:
-    print(f"Error loading credentials: {e}")
 
-try:
-    gauth.LoadClientConfigFile("client_secrets.json")
-except Exception as e:
-    print(f"Error loading client_secrets.json: {e}")
 
-if gauth.credentials is None:
-    gauth.LocalWebserverAuth()
-elif gauth.access_token_expired:
-    gauth.Refresh()
-else:
-    gauth.Authorize()
 
-gauth.SaveCredentialsFile("credentials.json")
-drive = GoogleDrive(gauth)
+def authenticate_and_get_drive():
+    gauth = GoogleAuth()
+    # Load credentials and authenticate
+    try:
+        gauth.LoadCredentialsFile("credentials.json")
+    except Exception as e:
+        print(f"Error loading credentials: {e}")
+
+    try:
+        gauth.LoadClientConfigFile("client_secrets.json")
+    except Exception as e:
+        print(f"Error loading client_secrets.json: {e}")
+
+    if gauth.credentials is None:
+        gauth.LocalWebserverAuth()
+    elif gauth.access_token_expired:
+        gauth.Refresh()
+    else:
+        gauth.Authorize()
+
+    gauth.SaveCredentialsFile("credentials.json")
+    drive = GoogleDrive(gauth)
+    return drive
 
 def load_or_generate_key():
     key_path = "aes_key.bin"
@@ -60,6 +65,7 @@ def encrypt_file(file_path, key):
 FOLDER_ID = '13r08X0-Q3I4zUT_75iIXO7upSEZsqwUB'
 
 def upload_to_google_drive(file_path):
+    drive=authenticate_and_get_drive()
     file_drive = drive.CreateFile({'title': os.path.basename(file_path), 'parents': [{'id': FOLDER_ID}]})
     file_drive.SetContentFile(file_path)
     file_drive.Upload()
@@ -108,10 +114,12 @@ def upload(request):
     return redirect('index')
 
 def list_files(request):
+    drive=authenticate_and_get_drive()
     file_list = drive.ListFile({'q': "title contains '.enc'"}).GetList()
     return render(request, 'download.html', {'files': file_list})
 
 def download_file(request, file_id):
+    drive=authenticate_and_get_drive()
     file_drive = drive.CreateFile({'id': file_id})
     encrypted_file_path = os.path.join(settings.MEDIA_ROOT, file_drive['title'])
     file_drive.GetContentFile(encrypted_file_path)
