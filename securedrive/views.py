@@ -1,19 +1,18 @@
 import os
 from django.conf import settings
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, FileResponse
+from django.http import FileResponse
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from django.contrib.auth.forms import UserCreationForm
-
-
+from django.contrib.auth.decorators import login_required
+from .models import UserFolder
 
 
 def authenticate_and_get_drive():
     gauth = GoogleAuth()
-    # Load credentials and authenticate
     try:
         gauth.LoadCredentialsFile("credentials.json")
     except Exception as e:
@@ -35,6 +34,7 @@ def authenticate_and_get_drive():
     drive = GoogleDrive(gauth)
     return drive
 
+
 def load_or_generate_key():
     key_path = "aes_key.bin"
     if os.path.exists(key_path):
@@ -46,8 +46,8 @@ def load_or_generate_key():
             key_file.write(key)
     return key
 
-key = load_or_generate_key()
 
+key = load_or_generate_key()
 
 
 def encrypt_file(file_path, key):
@@ -62,13 +62,38 @@ def encrypt_file(file_path, key):
         f.write(encrypted_data)
     return encrypted_file_path
 
-FOLDER_ID = '13r08X0-Q3I4zUT_75iIXO7upSEZsqwUB'
 
-def upload_to_google_drive(file_path):
-    drive=authenticate_and_get_drive()
-    file_drive = drive.CreateFile({'title': os.path.basename(file_path), 'parents': [{'id': FOLDER_ID}]})
+def create_folder_for_user(user):
+    drive = authenticate_and_get_drive()
+    folder_metadata = {
+        'title': f"Folder_{user.username}",
+        'mimeType': 'application/vnd.google-apps.folder'
+    }
+    folder = drive.CreateFile(folder_metadata)
+    folder.Upload()
+    return folder['id']
+
+
+def get_user_folder(user):
+    try:
+        user_folder = UserFolder.objects.get(user=user)
+        folder_id = user_folder.folder_id
+        return folder_id
+    except UserFolder.DoesNotExist:
+        return None
+
+
+def upload_to_google_drive(file_path, user):
+    folder_id = get_user_folder(user)
+    if folder_id is None:
+        return "No folder assigned"
+
+    drive = authenticate_and_get_drive()
+    file_drive = drive.CreateFile({'title': os.path.basename(file_path), 'parents': [{'id': folder_id}]})
     file_drive.SetContentFile(file_path)
     file_drive.Upload()
+    return "File uploaded successfully!"
+
 
 def decrypt_file(file_path, key):
     with open(file_path, 'rb') as f:
@@ -82,19 +107,25 @@ def decrypt_file(file_path, key):
         f.write(decrypted_data)
     return decrypted_file_path
 
+
 def index(request):
     return render(request, 'index.html')
+
 
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the user to the database
-            return redirect('login')  # Redirect to the login page after successful signup
+            user = form.save()
+            folder_id = create_folder_for_user(user)
+            UserFolder.objects.create(user=user, folder_id=folder_id)
+            return redirect('index')
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
 
+
+@login_required
 def upload(request):
     if request.method == 'POST' and 'file' in request.FILES:
         file = request.FILES['file']
@@ -104,22 +135,33 @@ def upload(request):
                 f.write(chunk)
 
         encrypted_file_path = encrypt_file(file_path, key)
-        upload_to_google_drive(encrypted_file_path)
+        upload_message = upload_to_google_drive(encrypted_file_path, request.user)
 
         os.remove(file_path)
         os.remove(encrypted_file_path)
 
-        return render(request, 'index.html', {'message': "File uploaded successfully!"})
+        return render(request, 'index.html', {'message': upload_message})
 
     return redirect('index')
 
+
+@login_required
 def list_files(request):
-    drive=authenticate_and_get_drive()
-    file_list = drive.ListFile({'q': "title contains '.enc'"}).GetList()
+    drive = authenticate_and_get_drive()
+    folder_id = get_user_folder(request.user)  # Get the user's folder ID
+
+    if not folder_id:
+        return render(request, 'download.html', {'files': [], 'message': "No folder found for the user."})
+
+    # List files only in the user's Google Drive folder
+    query = f"'{folder_id}' in parents and title contains '.enc'"
+    file_list = drive.ListFile({'q': query}).GetList()
+    
     return render(request, 'download.html', {'files': file_list})
 
+@login_required
 def download_file(request, file_id):
-    drive=authenticate_and_get_drive()
+    drive = authenticate_and_get_drive()
     file_drive = drive.CreateFile({'id': file_id})
     encrypted_file_path = os.path.join(settings.MEDIA_ROOT, file_drive['title'])
     file_drive.GetContentFile(encrypted_file_path)

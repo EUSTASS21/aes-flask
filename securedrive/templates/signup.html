@@ -73,6 +73,18 @@
             transition: background-color 0.3s ease;
             font-weight: 600;
         }
+                /* Header Container Styling */
+                .header-container {
+            display: flex;
+            align-items: center; /* Vertically centers items */
+            justify-content: center; /* Horizontally centers items */
+            margin-bottom: 30px; /* Space below the header container */
+        }
+        .header-container i {
+            font-size: 40px;
+            line-height: 1;
+            margin-right: 10px; /* Space between icon and text */
+        }
 
         button:hover {
             background-color: #135a96;
@@ -95,7 +107,10 @@
 </head>
 <body>
     <div class="container">
-        <h2>Signup</h2>
+        <div class="header-container">
+            <i class="fab fa-google-drive"></i>
+            <h2>signup</h2>
+        </div>
         <form method="post">
             {% csrf_token %}
             
