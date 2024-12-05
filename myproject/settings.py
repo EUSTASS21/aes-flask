@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-1pnw_(j2rqe2pp*g*i15)#q@ftd=&0l!j*4bn2v*1*jd9@4^x&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -82,14 +82,11 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'securedrive',
-        'USER': 'postgres',
-        'PASSWORD': '123',
-        'HOST': 'localhost',  
-        'PORT': '5432',      
+        'ENGINE': 'django.db.backends.sqlite3',  # Database backend
+        'NAME': BASE_DIR / 'db.sqlite3',        # Path to database file
     }
 }
+
 
 
 # Password validation

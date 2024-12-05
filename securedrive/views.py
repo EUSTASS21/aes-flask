@@ -74,19 +74,28 @@ def create_folder_for_user(user):
     return folder['id']
 
 
-def get_user_folder(user):
+def get_user_folder(user, request):
+    # Check if folder_id is stored in session
+    folder_id = request.session.get('user_folder_id', None)
+    if folder_id:
+        return folder_id
+    
     try:
         user_folder = UserFolder.objects.get(user=user)
         folder_id = user_folder.folder_id
+        request.session['user_folder_id'] = folder_id  # Store in session for future requests
         return folder_id
     except UserFolder.DoesNotExist:
         return None
 
 
-def upload_to_google_drive(file_path, user):
-    folder_id = get_user_folder(user)
+def upload_to_google_drive(file_path, user, request):
+    folder_id = get_user_folder(user, request)
     if folder_id is None:
         return "No folder assigned"
+
+    # Store the last uploaded file path in session (if needed)
+    request.session['last_uploaded_file'] = file_path  # This can be used for tracking or further operations
 
     drive = authenticate_and_get_drive()
     file_drive = drive.CreateFile({'title': os.path.basename(file_path), 'parents': [{'id': folder_id}]})
@@ -109,7 +118,18 @@ def decrypt_file(file_path, key):
 
 
 def index(request):
-    return render(request, 'index.html')
+    # Retrieve last upload message or file from the session
+    last_upload_message = request.session.get('last_upload_message', None)
+    last_uploaded_file = request.session.get('last_uploaded_file', None)
+
+    # Get the username (if the user is authenticated)
+    username = request.user.username if request.user.is_authenticated else 'Invité'
+    
+    return render(request, 'index.html', {
+        'last_upload_message': last_upload_message,
+        'last_uploaded_file': last_uploaded_file,
+        'username': username  # Add the username to the context
+    })
 
 
 def signup(request):
@@ -135,7 +155,10 @@ def upload(request):
                 f.write(chunk)
 
         encrypted_file_path = encrypt_file(file_path, key)
-        upload_message = upload_to_google_drive(encrypted_file_path, request.user)
+        upload_message = upload_to_google_drive(encrypted_file_path, request.user, request)
+
+        # Store upload status in session
+        request.session['last_upload_message'] = upload_message  # Store last upload message
 
         os.remove(file_path)
         os.remove(encrypted_file_path)
@@ -148,7 +171,7 @@ def upload(request):
 @login_required
 def list_files(request):
     drive = authenticate_and_get_drive()
-    folder_id = get_user_folder(request.user)  # Get the user's folder ID
+    folder_id = get_user_folder(request.user, request)  # Get the user's folder ID
 
     if not folder_id:
         return render(request, 'download.html', {'files': [], 'message': "No folder found for the user."})
@@ -158,6 +181,7 @@ def list_files(request):
     file_list = drive.ListFile({'q': query}).GetList()
     
     return render(request, 'download.html', {'files': file_list})
+
 
 @login_required
 def download_file(request, file_id):

@@ -20,6 +20,7 @@
             min-height: 100vh;
             background-color: #ffffff;
             color: #333;
+            flex-direction: column; /* Adjust body to allow footer to be at the bottom */
         }
 
         .container {
@@ -30,6 +31,7 @@
             text-align: center;
             max-width: 500px;
             width: 90%;
+            margin: auto; /* Centers the container */
         }
 
         h2 {
@@ -73,13 +75,14 @@
             transition: background-color 0.3s ease;
             font-weight: 600;
         }
-                /* Header Container Styling */
-                .header-container {
+
+        .header-container {
             display: flex;
             align-items: center; /* Vertically centers items */
             justify-content: center; /* Horizontally centers items */
             margin-bottom: 30px; /* Space below the header container */
         }
+
         .header-container i {
             font-size: 40px;
             line-height: 1;
@@ -102,6 +105,30 @@
 
         .login-link a:hover {
             text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+            background-color: #f1f1f1;
+            border-top: 2px solid #ddd;
+        }
+
+        footer p {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            color: #0056b3;
         }
     </style>
 </head>
@@ -151,5 +178,9 @@
             <p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
         </div>
     </div>
+
+    <footer>
+        <p>&copy; --amc.aymane-- <a href="/contact">Contactez-moi</a></p>
+    </footer>
 </body>
 </html>

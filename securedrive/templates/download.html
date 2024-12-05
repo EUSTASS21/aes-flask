@@ -21,6 +21,7 @@
             min-height: 100vh;
             background-color: #ffffff;
             color: #333;
+            flex-direction: column;
         }
 
         /* Container Styling */
@@ -34,21 +35,20 @@
             width: 90%;
         }
 
-
         /* Header Styling */
         h1 {
-            font-size: 2.5em; /* Increase the size for better prominence */
+            font-size: 2.5em;
             margin-bottom: 30px;
-            font-weight: 700; /* Bold weight for better emphasis */
-            text-align: center; /* Center-align the text */
-            text-transform: uppercase; /* Uppercase letters for a more formal feel */
-            letter-spacing: 1px; /* Add some space between letters */
-            line-height: 1.3; /* Adjust line height for a cleaner look */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean, modern font */
-            background: linear-gradient(90deg, #031ece, #58a6ff); /* Gradient from blue to light blue */
-            -webkit-background-clip: text; /* Clip the background gradient to the text */
-            color: transparent; /* Make the text color transparent to show the gradient */
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(90deg, #031ece, #58a6ff);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         /* Search Bar Styling */
@@ -136,6 +136,31 @@
             background-color: #d0d8e4;
         }
 
+        /* Footer Styling */
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+            background-color: #f1f1f1;
+            border-top: 2px solid #ddd;
+        }
+
+        footer p {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            color: #0056b3;
+        }
+
     </style>
 </head>
 <body>
@@ -157,6 +182,11 @@
 
         <a href="/home/" class="back-link">Retour à l'accueil</a>
     </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; --amc.aymane-- <a href="/contact">Contactez-moi</a></p>
+    </footer>
 
     <script>
         // Function to filter the files based on search input

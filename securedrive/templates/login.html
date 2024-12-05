@@ -17,12 +17,21 @@
         /* Body Styling */
         body {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            flex-direction: column; /* Align elements vertically */
+            justify-content: space-between; /* Ensure footer is at the bottom */
+            min-height: 100vh; /* Full viewport height */
             background-color: #ffffff;
             color: #333;
         }
+
+        /* Wrapper for the main content area */
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1; /* Allow this section to grow and fill available space */
+        }
+
         /* Header Container Styling */
         .header-container {
             display: flex;
@@ -110,24 +119,56 @@
         .signup-link a:hover {
             text-decoration: underline;
         }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+            background-color: #f1f1f1;
+            border-top: 2px solid #ddd;
+        }
+
+        footer p {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            color: #0056b3;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header-container">
-            <i class="fab fa-google-drive"></i>
-            <h1>Login</h1>
-        </div>
-        <form method="post">
-            {% csrf_token %}
-            <input class="input-field" type="text" name="username" placeholder="Username" required>
-            <input class="input-field" type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
+    <!-- Wrapper for main content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <div class="header-container">
+                <i class="fab fa-google-drive"></i>
+                <h1>Login</h1>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <input class="input-field" type="text" name="username" placeholder="Username" required>
+                <input class="input-field" type="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
 
-        <div class="signup-link">
-            <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
+            <div class="signup-link">
+                <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
+            </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; --amc.aymane-- <a href="/contact">Contactez-moi</a></p>
+    </footer>
 </body>
 </html>

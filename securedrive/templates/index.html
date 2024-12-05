@@ -17,15 +17,15 @@
         /* Body Styling */
         body {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            flex-direction: column;
+            min-height: 100vh; /* Ensures the body takes up at least the full height of the viewport */
             background-color: #ffffff;
             color: #333;
         }
 
         /* Container Styling */
         .container {
+            flex: 0; /* Ensures the container takes up the remaining space */
             background-color: #ffffff;
             padding: 40px;
             border-radius: 12px;
@@ -33,6 +33,7 @@
             text-align: center;
             max-width: 500px;
             width: 90%;
+            margin: auto; /* Centers the container */
         }
 
         /* Header Container Styling */
@@ -56,12 +57,22 @@
             font-weight: 700; /* Bold weight for better emphasis */
             text-transform: uppercase; /* Uppercase letters for a more formal feel */
             letter-spacing: 1px; /* Add some space between letters */
-            line-height: 1.3; /* Adjust line height for a cleaner look */
+            line-height: 1; /* Adjust line height for a cleaner look */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean, modern font */
             background: linear-gradient(90deg, #031ece, #58a6ff); /* Gradient from blue to light blue */
             -webkit-background-clip: text; /* Clip the background gradient to the text */
             color: transparent; /* Make the text color transparent to show the gradient */
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
+            margin: 0; /* Removes default margin */
+        }
+
+        h2 {
+            font-size: 1em; /* Increase the size for better prominence */
+            font-weight: 700; /* Bold weight for better emphasis */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean, modern font */
+            text-transform: uppercase; /* Uppercase letters for a more formal feel */
+            letter-spacing: 1px; /* Add some space between letters */
+            line-height: 5; /* Adjust line height for a cleaner look */
             margin: 0; /* Removes default margin */
         }
 
@@ -136,6 +147,30 @@
             font-weight: bold;
             font-size: 1.2em;
         }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+            background-color: #f1f1f1;
+            border-top: 2px solid #ddd;
+        }
+
+        footer p {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -144,6 +179,12 @@
             <i class="fab fa-google-drive"></i>
             <h1>SECURE DRIVE</h1>
         </div>
+
+        <!-- Display the username -->
+        <div class="user-greeting">
+            <h2>--{{ username }}--</h2> <!-- Greet the user by name -->
+        </div>
+
         <form action="/upload/" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <!-- Drag and Drop File Upload Area -->
@@ -157,6 +198,7 @@
                 <button type="submit">Uploader</button>
             </div>
         </form>
+
         <form action="/download/" method="get" class="form-group">
             <button type="submit">Télécharger les fichiers déchiffrés</button>
         </form>
@@ -168,6 +210,9 @@
         </div>
         {% endif %}
     </div>
+    <footer>
+        <p>&copy; --amc.aymane-- <a href="/contact">Contactez-moi</a></p>
+    </footer>
 
     <!-- JavaScript to display file name and handle drag-and-drop -->
     <script>
