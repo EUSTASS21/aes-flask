@@ -136,3 +136,5 @@ APPEND_SLASH = False
 
 LOGIN_REDIRECT_URL = '/home/'  # or any page you want
 
+CSRF_TRUSTED_ORIGINS = ['https://securedrive.onrender.com']
+
