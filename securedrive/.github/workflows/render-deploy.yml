@@ -1,4 +1,4 @@
-name: Deploy to Render
+name: Test and Deploy to Render
 
 # Specify when the workflow should run
 on:
@@ -14,12 +14,37 @@ on:
         default: "Manual trigger"
 
 jobs:
-  deploy:
+  test_and_deploy:
     runs-on: ubuntu-latest  # Use the latest Ubuntu environment
 
     steps:
-    # Trigger deployment using Render Deploy Hook
+    # Step 1: Checkout the repository
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9  # Specify the Python version
+
+    # Step 3: Install dependencies
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 4: Run Django tests
+    - name: Run Django Tests
+      run: |
+        python manage.py test
+      env:
+        DJANGO_SETTINGS_MODULE: your_project.settings  # Replace with your settings module if needed
+        DATABASE_URL: sqlite:///db.sqlite3  # Use SQLite for tests or configure your test database
+
+    # Step 5: Trigger deployment only if tests pass
     - name: Trigger Render Deployment
+      if: success()  # This ensures deployment happens only if tests pass
       run: |
         echo "Starting deployment on Render..."
         curl -X POST https://api.render.com/deploy/srv-ct8ofeq3esus7384fbj0?key=Bg8pV41IzWo
