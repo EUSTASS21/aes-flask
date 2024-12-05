@@ -1,0 +1,26 @@
+name: Deploy to Render
+
+# Specify when the workflow should run
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on pushes to the main branch
+
+  workflow_dispatch:  # Allow manual triggering of the workflow
+    inputs:
+      trigger_reason:
+        description: "Reason for triggering deployment"
+        required: false
+        default: "Manual trigger"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu environment
+
+    steps:
+    # Trigger deployment using Render Deploy Hook
+    - name: Trigger Render Deployment
+      run: |
+        echo "Starting deployment on Render..."
+        curl -X POST https://api.render.com/deploy/srv-ct8ofeq3esus7384fbj0?key=Bg8pV41IzWo
+        echo "Deployment triggered successfully."
